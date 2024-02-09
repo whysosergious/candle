@@ -437,7 +437,7 @@ pub struct Worker {
 #[derive(Serialize, Deserialize)]
 pub enum WorkerInput {
     ModelData(ModelData),
-    DecodeTask { wav_bytes: Vec<u8> },
+    EncodeTask { wav_bytes: Vec<u8> },
 }
 
 #[derive(Serialize, Deserialize)]
@@ -472,9 +472,9 @@ impl yew_agent::Worker for Worker {
                 }
                 Err(err) => Err(format!("model creation error {err:?}")),
             },
-            WorkerInput::DecodeTask { wav_bytes } => match &mut self.decoder {
+            WorkerInput::EncodeTask { wav_bytes } => match &mut self.encoder {
                 None => Err("model has not been set".to_string()),
-                Some(decoder) => decoder
+                Some(encoder) => encoder
                     .convert_and_run(&wav_bytes)
                     .map(WorkerOutput::Decoded)
                     .map_err(|e| e.to_string()),
